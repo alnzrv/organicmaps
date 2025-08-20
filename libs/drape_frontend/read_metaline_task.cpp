@@ -1,7 +1,5 @@
 #include "drape_frontend/read_metaline_task.hpp"
-
 #include "drape_frontend/map_data_provider.hpp"
-#include "drape_frontend/metaline_manager.hpp"
 
 #include "indexer/feature_decl.hpp"
 
@@ -28,16 +26,17 @@ std::vector<MetalineData> ReadMetalinesFromFile(MwmSet::MwmId const & mwmId)
 {
   try
   {
-    std::vector<MetalineData> model;
-    ModelReaderPtr reader =
-        FilesContainerR(mwmId.GetInfo()->GetLocalFile().GetPath(MapFileType::Map)).GetReader(METALINES_FILE_TAG);
+    FilesContainerR cont(mwmId.GetInfo()->GetLocalFile().GetPath(MapFileType::Map));
+    ModelReaderPtr reader = cont.GetReader(METALINES_FILE_TAG);
     ReaderSrc src(reader.GetPtr());
+
+    std::vector<MetalineData> model;
     auto const version = ReadPrimitiveFromSource<uint8_t>(src);
-    if (version == 1)
+    if (version == 1)  /// @todo kMetaLinesSectionVersion from metalines_builder.cpp
     {
       for (auto metalineIndex = ReadVarUint<uint32_t>(src); metalineIndex > 0; --metalineIndex)
       {
-        MetalineData data{};
+        MetalineData data;
         for (auto i = ReadVarUint<uint32_t>(src); i > 0; --i)
         {
           auto const fid = ReadVarInt<int32_t>(src);

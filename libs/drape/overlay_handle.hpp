@@ -121,7 +121,7 @@ public:
   void AddDynamicAttribute(BindingInfo const & binding, uint32_t offset, uint32_t count);
 
   OverlayID const & GetOverlayID() const { return m_id; }
-  uint64_t const & GetPriority() const { return m_priority; }
+  uint64_t GetPriority() const { return m_priority; }
 
   virtual bool IsBound() const { return false; }
   virtual bool HasLinearFeatureShape() const { return false; }
@@ -150,6 +150,7 @@ public:
   //    prevails over priorities, so displacement results are unpredictable.
   bool GetDisplayFlag() const { return true; /* m_displayFlag; */ }
 
+  // Used in modelView.isPerspective() only, after GetDisplayFlag() == true.
   void SetSpecialLayerOverlay(bool isSpecialLayerOverlay) { m_isSpecialLayerOverlay = isSpecialLayerOverlay; }
   bool IsSpecialLayerOverlay() const { return m_isSpecialLayerOverlay; }
 

@@ -29,12 +29,12 @@ public:
 
   bool IsGreater(ref_ptr<OverlayHandle> const & l, ref_ptr<OverlayHandle> const & r) const
   {
-    bool const displayFlagLeft = ((!m_enableMask || l->IsSpecialLayerOverlay()) ? true : l->GetDisplayFlag());
-    bool const displayFlagRight = ((!m_enableMask || r->IsSpecialLayerOverlay()) ? true : r->GetDisplayFlag());
-    if (displayFlagLeft > displayFlagRight)
-      return true;
+    // bool const displayFlagLeft = ((!m_enableMask || l->IsSpecialLayerOverlay()) ? true : l->GetDisplayFlag());
+    // bool const displayFlagRight = ((!m_enableMask || r->IsSpecialLayerOverlay()) ? true : r->GetDisplayFlag());
+    // if (displayFlagLeft > displayFlagRight)
+    //   return true;
 
-    if (displayFlagLeft == displayFlagRight)
+    // if (displayFlagLeft == displayFlagRight)
     {
       uint64_t const priorityLeft = l->GetPriority();
       uint64_t const priorityRight = r->GetPriority();
@@ -58,13 +58,14 @@ public:
 
   bool IsEqual(ref_ptr<OverlayHandle> const & l, ref_ptr<OverlayHandle> const & r) const
   {
-    bool const displayFlagLeft = ((!m_enableMask || l->IsSpecialLayerOverlay()) ? true : l->GetDisplayFlag());
-    bool const displayFlagRight = ((!m_enableMask || r->IsSpecialLayerOverlay()) ? true : r->GetDisplayFlag());
+    // bool const displayFlagLeft = ((!m_enableMask || l->IsSpecialLayerOverlay()) ? true : l->GetDisplayFlag());
+    // bool const displayFlagRight = ((!m_enableMask || r->IsSpecialLayerOverlay()) ? true : r->GetDisplayFlag());
 
-    if (displayFlagLeft == displayFlagRight)
-      return l->GetPriority() == r->GetPriority();
+    // if (displayFlagLeft == displayFlagRight)
+    //   return l->GetPriority() == r->GetPriority();
+    // return false;
 
-    return false;
+    return l->GetPriority() == r->GetPriority();
   }
 
 private:

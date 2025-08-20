@@ -1,6 +1,4 @@
 #include "generator/metalines_builder.hpp"
-
-#include "generator/intermediate_data.hpp"
 #include "generator/routing_helpers.hpp"
 
 #include "indexer/classificator.hpp"
@@ -12,16 +10,15 @@
 
 #include "base/checked_cast.hpp"
 #include "base/logging.hpp"
-#include "base/string_utils.hpp"
 
 #include "defines.hpp"
 
-#include <cstdint>
 #include <limits>
 #include <map>
 
 namespace
 {
+/// @todo See ReadMetalinesFromFile.
 uint8_t constexpr kMetaLinesSectionVersion = 1;
 }  // namespace
 
