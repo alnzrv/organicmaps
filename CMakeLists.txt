@@ -123,14 +123,12 @@ if (PLATFORM_LINUX OR PLATFORM_ANDROID)
   endif()
 endif()
 
-if (NOT SKIP_TESTS)
-  enable_testing()
-  # Enables ctest -T memcheck with valgrind
-  include(CTest)
-  if (COVERAGE_REPORT)
-    include(OmimCoverage)
-  endif ()
-endif()
+# Enables ctest -T memcheck with valgrind
+# Defines BUILD_TESTING=ON by default, does not initialize tests with -DBUILD_TESTING=OFF
+include(CTest)
+if (COVERAGE_REPORT)
+  include(OmimCoverage)
+endif ()
 
 if (NOT PYTHON_VERSION)
   # FDroid build server has 3.5.3 Python installed.
@@ -145,7 +143,7 @@ find_package(Threads REQUIRED)
 
 if (NOT PLATFORM_IPHONE AND NOT PLATFORM_ANDROID)
   list(APPEND qt_components Core Network)
-  if (NOT SKIP_QT_GUI OR NOT SKIP_TESTS OR PYBINDINGS)
+  if (NOT SKIP_QT_GUI OR PYBINDINGS)
     list(APPEND qt_components Widgets)
   endif()
   if (NOT SKIP_QT_GUI)
