@@ -57,7 +57,9 @@ JNIEXPORT jint Java_app_organicmaps_sdk_Framework_nativeGetDrawScale(JNIEnv * en
 
 ## Important notes
 - Minimum SDK: 21; target SDK: latest stable
-- Java 17 source/target; Kotlin only enabled with Firebase
+- Java 17 source/target; Kotlin enabled in `app` module, other modules can opt in via `enableKotlin = true` in `build.gradle`
+- When converting a Java utility class to Kotlin top-level functions, use `@file:JvmName("ClassName")` to preserve static call sites for Java callers
+- Run `ktlint --editorconfig=android/.editorconfig --format <file.kt>` after creating or editing Kotlin files
 - NDK version: 29+; CMake: 3.22.1+
 - Deep link schemes: `geo://`, `om://`, `ge0://`, `ge0.me` (HTTP/HTTPS)
 - Permissions validated at build time via `permission-checker.gradle`

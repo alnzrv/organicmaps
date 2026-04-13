@@ -56,6 +56,24 @@ Make sure that swiftformat is in your PATH.
 - Run `swiftformat <somefile.swift>` to format a single file
 - Set up a `git commit` hook (see below) for automatic formatting of changed files
 
+## Kotlin Style
+
+We are using [ktlint](https://pinterest.github.io/ktlint/) for Kotlin code formatting.
+
+### Installation
+
+- macOS: `brew install ktlint`
+- Other platforms: download from [GitHub Releases](https://github.com/pinterest/ktlint/releases)
+
+Make sure that ktlint is in your PATH.
+
+### Usage
+
+- Configuration is in `android/.editorconfig`
+- Run `ktlint --format <somefile.kt>` to format a single file
+- To format all Kotlin files in the repository run `tools/unix/ktlint_format.sh`
+- Set up a `git commit` hook (see below) for automatic formatting of changed files
+
 ## Python Style
 
 Follow the existing style in Python files as much as possible. We'll add a more detailed guide later.
@@ -65,11 +83,11 @@ Follow the existing style in Python files as much as possible. We'll add a more 
 Run `git config core.hooksPath tools/hooks` to set up the pre-commit hook.
 
 After that, every time you commit, the hook will automatically format your
-`.java`, `.swift`, `.cpp`, `.hpp`, `.m`, `.mm`, `.h`, and `.cc` code according to the project's style rules.
+`.java`, `.kt`, `.swift`, `.cpp`, `.hpp`, `.m`, `.mm`, `.h`, and `.cc` code according to the project's style rules.
 
 You can bypass the auto-formatting with `git commit --no-verify` if necessary.
 
-To configure the formatting style, edit `.clang-format` and `.swiftformat` in the project root.
+To configure the formatting style, edit `.clang-format`, `.swiftformat` in the project root, and `android/.editorconfig` for Kotlin.
 
 To configure which files are formatted, edit `tools/hooks/format-config.bash`
 
