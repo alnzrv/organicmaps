@@ -5,7 +5,7 @@ enum NavigationDashboard {
     var routerType: MWMRouterType
     var entity: MWMNavigationDashboardEntity
     var routingOptions: RoutingOptions
-    var elevationInfo: ElevationInfo?
+    var elevationInfo: PlacePageTrackData?
     var navigationInfo: NavigationInfo
     var estimates: NSAttributedString
     var dashboardState: MWMNavigationDashboardState
@@ -22,11 +22,6 @@ enum NavigationDashboard {
     var navigationSearchState: NavigationSearchState?
     var canSaveRouteAsTrack: Bool
     var errorMessage: String?
-  }
-
-  struct ElevationInfo: Equatable {
-    var estimates: NSAttributedString
-    var image: UIImage?
   }
 
   struct NavigationInfo: Equatable {

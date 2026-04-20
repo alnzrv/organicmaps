@@ -67,15 +67,13 @@ extension NavigationDashboard {
 
       case .updateNavigationInfo(let entity):
         let estimates = buildEstimatesString(routerType: viewModel.routerType,
-                                             navigationInfo: entity,
-                                             elevationInfo: viewModel.elevationInfo)
+                                             navigationInfo: entity)
         viewModel.entity = entity
         viewModel.estimates = estimates
 
       case .updateElevationInfo(let elevationInfo):
         let estimates = buildEstimatesString(routerType: viewModel.routerType,
-                                             navigationInfo: viewModel.entity,
-                                             elevationInfo: elevationInfo)
+                                             navigationInfo: viewModel.entity)
         viewModel.elevationInfo = elevationInfo
         viewModel.estimates = estimates
 
@@ -124,17 +122,13 @@ extension NavigationDashboard {
     }
 
     private func buildEstimatesString(routerType: MWMRouterType,
-                                      navigationInfo: MWMNavigationDashboardEntity,
-                                      elevationInfo: ElevationInfo?) -> NSAttributedString {
+                                      navigationInfo: MWMNavigationDashboardEntity) -> NSAttributedString {
       let result = NSMutableAttributedString()
       if let estimates = navigationInfo.estimate() {
         if routerType == .ruler {
           result.append(NSAttributedString(string: L("placepage_distance") + ": "))
         }
         result.append(estimates)
-      }
-      if let elevationInfo {
-        result.append(elevationInfo.estimates)
       }
       return result
     }

@@ -16,12 +16,24 @@ protocol ElevationProfileViewProtocol: AnyObject {
 
 final class ElevationProfileViewController: UIViewController {
   private enum Constants {
-    static let descriptionCollectionViewHeight: CGFloat = 52
-    static let descriptionCollectionViewContentInsets = UIEdgeInsets(top: 20, left: 16, bottom: 4, right: 16)
-    static let graphViewContainerInsets = UIEdgeInsets(top: -4, left: 0, bottom: 0, right: 0)
-    static let chartViewInsets = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: -16)
+    static let chartViewInsets = UIEdgeInsets(top: 12, left: 16, bottom: 0, right: -16)
     static let chartViewVisibleHeight: CGFloat = 176
-    static let chartViewHiddenHeight: CGFloat = .zero
+    static let descriptionCollectionViewHeight: CGFloat = 44
+    static let graphViewContainerInsets = UIEdgeInsets(top: -4, left: 0, bottom: 0, right: 0)
+  }
+
+  var chartHeight: CGFloat = Constants.chartViewVisibleHeight {
+    didSet {
+      guard chartHeight != oldValue else { return }
+      reloadConstraints()
+    }
+  }
+
+  var chartInsets: UIEdgeInsets = Constants.chartViewInsets {
+    didSet {
+      guard chartInsets != oldValue else { return }
+      reloadConstraints()
+    }
   }
 
   var presenter: ElevationProfilePresenterProtocol?
@@ -44,7 +56,13 @@ final class ElevationProfileViewController: UIViewController {
     return UICollectionView(frame: .zero, collectionViewLayout: layout)
   }()
 
+  private var chartViewBottomConstraint: NSLayoutConstraint!
+  private var chartViewLeadingConstraint: NSLayoutConstraint!
+  private var chartViewTrailingConstraint: NSLayoutConstraint!
   private var chartViewHeightConstraint: NSLayoutConstraint!
+  private var descriptionCollectionViewViewTopConstraint: NSLayoutConstraint!
+  private var descriptionCollectionViewViewLeadingConstraint: NSLayoutConstraint!
+  private var descriptionCollectionViewViewTrailingConstraint: NSLayoutConstraint!
 
   // MARK: - Lifecycle
 
@@ -82,7 +100,6 @@ final class ElevationProfileViewController: UIViewController {
     descriptionCollectionView.dataSource = presenter
     descriptionCollectionView.delegate = presenter
     descriptionCollectionView.isScrollEnabled = false
-    descriptionCollectionView.contentInset = Constants.descriptionCollectionViewContentInsets
     descriptionCollectionView.translatesAutoresizingMaskIntoConstraints = false
     descriptionCollectionView.showsHorizontalScrollIndicator = false
     descriptionCollectionView.showsVerticalScrollIndicator = false
@@ -93,22 +110,44 @@ final class ElevationProfileViewController: UIViewController {
     graphViewContainer.addSubview(chartView)
     view.addSubview(graphViewContainer)
 
-    chartViewHeightConstraint = chartView.heightAnchor.constraint(equalToConstant: Constants.chartViewVisibleHeight)
+    chartViewLeadingConstraint = chartView.leadingAnchor.constraint(equalTo: graphViewContainer.leadingAnchor, constant: chartInsets.left)
+    chartViewTrailingConstraint = chartView.trailingAnchor.constraint(equalTo: graphViewContainer.trailingAnchor, constant: chartInsets.right)
+    chartViewBottomConstraint = chartView.bottomAnchor.constraint(equalTo: graphViewContainer.bottomAnchor, constant: chartInsets.bottom)
+    chartViewHeightConstraint = chartView.heightAnchor.constraint(equalToConstant: chartHeight)
+    descriptionCollectionViewViewTopConstraint = descriptionCollectionView.topAnchor.constraint(equalTo: view.topAnchor, constant: chartInsets.top)
+    descriptionCollectionViewViewLeadingConstraint = descriptionCollectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: chartInsets.left)
+    descriptionCollectionViewViewTrailingConstraint = descriptionCollectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: chartInsets.right)
     NSLayoutConstraint.activate([
-      descriptionCollectionView.topAnchor.constraint(equalTo: view.topAnchor),
-      descriptionCollectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-      descriptionCollectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+      descriptionCollectionViewViewTopConstraint,
+      descriptionCollectionViewViewLeadingConstraint,
+      descriptionCollectionViewViewTrailingConstraint,
       descriptionCollectionView.heightAnchor.constraint(equalToConstant: Constants.descriptionCollectionViewHeight),
       descriptionCollectionView.bottomAnchor.constraint(equalTo: graphViewContainer.topAnchor, constant: Constants.graphViewContainerInsets.top),
       graphViewContainer.leadingAnchor.constraint(equalTo: view.leadingAnchor),
       graphViewContainer.trailingAnchor.constraint(equalTo: view.trailingAnchor),
       graphViewContainer.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+      chartViewLeadingConstraint,
+      chartViewTrailingConstraint,
       chartView.topAnchor.constraint(equalTo: graphViewContainer.topAnchor),
-      chartView.leadingAnchor.constraint(equalTo: graphViewContainer.leadingAnchor, constant: Constants.chartViewInsets.left),
-      chartView.trailingAnchor.constraint(equalTo: graphViewContainer.trailingAnchor, constant: Constants.chartViewInsets.right),
-      chartView.bottomAnchor.constraint(equalTo: graphViewContainer.bottomAnchor),
+      chartViewBottomConstraint,
       chartViewHeightConstraint,
     ])
+  }
+
+  private func reloadConstraints() {
+    guard isViewLoaded else { return }
+    let wasChartHidden = isChartViewHidden
+    chartViewHeightConstraint.constant = wasChartHidden ? .zero : chartHeight
+    chartViewLeadingConstraint.constant = chartInsets.left
+    chartViewTrailingConstraint.constant = chartInsets.right
+    descriptionCollectionViewViewTopConstraint.constant = chartInsets.top
+    descriptionCollectionViewViewLeadingConstraint.constant = chartInsets.left
+    descriptionCollectionViewViewTrailingConstraint.constant = chartInsets.right
+    presenter?.configure()
+    isChartViewHidden = wasChartHidden
+    reloadDescription()
+    view.setNeedsLayout()
+    view.layoutIfNeeded()
   }
 
   private func getPreviewHeight() -> CGFloat {
@@ -129,7 +168,7 @@ extension ElevationProfileViewController: ElevationProfileViewProtocol {
     set {
       chartView.isHidden = newValue
       graphViewContainer.isHidden = newValue
-      chartViewHeightConstraint.constant = newValue ? Constants.chartViewHiddenHeight : Constants.chartViewVisibleHeight
+      chartViewHeightConstraint.constant = newValue ? .zero : chartHeight
     }
   }
 
