@@ -1,7 +1,6 @@
 #import "MWMFrameworkHelper.h"
 #import "ElevationProfileData+Core.h"
 #import "MWMMapSearchResult+Core.h"
-#import "PlacePageTrackData.h"
 #import "Product+Core.h"
 #import "ProductsConfiguration+Core.h"
 #import "TrackInfo+Core.h"
@@ -9,8 +8,6 @@
 #include "Framework.h"
 
 #include "base/sunrise_sunset.hpp"
-
-#include "kml/type_utils.hpp"
 
 #include "platform/local_country_file_utils.hpp"
 #include "platform/network_policy_ios.h"
@@ -203,30 +200,6 @@ static Framework::ProductsPopupCloseReason ConvertProductPopupCloseReasonToCore(
 + (void)showTrack:(MWMTrackID)trackId
 {
   GetFramework().ShowTrack(trackId);
-}
-
-+ (void)saveRouteAsTrack
-{
-  GetFramework().SaveRoute();
-}
-
-+ (PlacePageTrackData *)routeElevationProfileData
-{
-  ElevationInfo elevationInfo;
-  if (!GetFramework().GetRoutingManager().GetRouteElevationInfo(elevationInfo))
-    return nil;
-
-  auto const altitudesInfo = elevationInfo.CalculateAltitudesInfo(ElevationInfo::kDefThresholdMWM);
-  TrackStatistics trackStatistics;
-  trackStatistics.m_ascent = altitudesInfo.GetTotalAscent();
-  trackStatistics.m_descent = altitudesInfo.GetTotalDescent();
-  trackStatistics.m_maxElevation = altitudesInfo.m_maxAltitude;
-  trackStatistics.m_minElevation = altitudesInfo.m_minAltitude;
-
-  TrackInfo * trackInfo = [[TrackInfo alloc] initWithTrackStatistics:trackStatistics];
-  ElevationProfileData * profileData = [[ElevationProfileData alloc] initWithTrackId:kml::kInvalidTrackId
-                                                                       elevationInfo:elevationInfo];
-  return [[PlacePageTrackData alloc] initWithTrackInfo:trackInfo elevationInfo:profileData onActivePointChanged:^{}];
 }
 
 + (void)updatePlacePageData

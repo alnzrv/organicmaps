@@ -4,20 +4,17 @@ extension NavigationDashboard {
     private let router: MWMRouter.Type
     private let mapViewController: MapViewController
     private let searchManager: SearchOnMapManager
-    private let frameworkHelper: FrameworkHelper.Type
 
     weak var delegate: MWMRoutePreviewDelegate?
 
     init(presenter: Presenter,
          router: MWMRouter.Type = MWMRouter.self,
          mapViewController: MapViewController = MapViewController.shared()!,
-         searchManager: SearchOnMapManager = MapViewController.shared()!.searchManager,
-         frameworkHelper: FrameworkHelper.Type = FrameworkHelper.self) {
+         searchManager: SearchOnMapManager = MapViewController.shared()!.searchManager) {
       self.presenter = presenter
       self.router = router
       self.mapViewController = mapViewController
       self.searchManager = searchManager
-      self.frameworkHelper = frameworkHelper
       super.init()
     }
 
@@ -83,7 +80,7 @@ extension NavigationDashboard {
         return .none
 
       case .saveRouteAsTrackButtonDidTap:
-        frameworkHelper.saveRouteAsTrack()
+        router.saveRouteAsTrack()
         return .setRouteAsTrackSaved
 
       case .updateRouteBuildingProgress(let progress, let routerType):
@@ -204,16 +201,8 @@ extension NavigationDashboard.Interactor: NavigationDashboardView {
     process(.showError(errorMessage))
   }
 
-  static var elevationAttributes: [NSAttributedString.Key: Any] {
-    [.foregroundColor: UIColor.blackSecondaryText, .font: UIFont.medium16()]
-  }
-
   private func buildElevationInfoIfNeeded() {
-    guard router.hasRouteAltitude(), let elevationInfo = frameworkHelper.routeElevationProfileData() else {
-      presenter.process(.updateElevationInfo(nil))
-      return
-    }
-
+    let elevationInfo = router.routeElevationProfileData()
     process(.updateElevationInfo(elevationInfo))
   }
 }

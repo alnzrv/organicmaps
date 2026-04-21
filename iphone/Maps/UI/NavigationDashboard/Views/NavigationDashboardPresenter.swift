@@ -72,10 +72,7 @@ extension NavigationDashboard {
         viewModel.estimates = estimates
 
       case .updateElevationInfo(let elevationInfo):
-        let estimates = buildEstimatesString(routerType: viewModel.routerType,
-                                             navigationInfo: viewModel.entity)
-        viewModel.elevationInfo = elevationInfo
-        viewModel.estimates = estimates
+        viewModel.routeElevationPreviewData = elevationInfo
 
       case .updateNavigationInfoAvailableArea(let rect):
         viewModel.navigationInfo.availableArea = rect

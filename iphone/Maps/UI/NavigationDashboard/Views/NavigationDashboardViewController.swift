@@ -44,6 +44,7 @@ final class NavigationDashboardViewController: UIViewController {
   private let transportTransitStepsView = TransportTransitStepsView()
   private let elevationProfileContainerView = UIView()
   private var elevationProfileViewController: ElevationProfileViewController?
+  private var currentRouteElevationPreviewData: RouteElevationPreviewData?
   private let settingsButton = UIButton(type: .system)
   private let settingsBadge = BadgeWithNumber()
   private var routePointsView = RoutePointsView()
@@ -263,22 +264,29 @@ final class NavigationDashboardViewController: UIViewController {
     routePointsView.scrollViewDelegate = self
   }
 
-  private func updateElevationProfile(with trackData: PlacePageTrackData?) {
-    guard let trackData else {
+  private func updateElevationProfile(with routeElevationPreviewData: RouteElevationPreviewData?) {
+    guard routeElevationPreviewData !== currentRouteElevationPreviewData else {
+      elevationProfileContainerView.isHidden = routeElevationPreviewData == nil
+      return
+    }
+    currentRouteElevationPreviewData = routeElevationPreviewData
+
+    guard let routeElevationPreviewData else {
       removeElevationProfileIfNeeded()
       elevationProfileContainerView.isHidden = true
       return
     }
 
     if let elevationProfileViewController {
-      elevationProfileViewController.presenter?.update(with: trackData)
-      elevationProfileViewController.userInteractionEnabled = false
-      elevationProfileViewController.isChartViewInfoHidden = true
+      elevationProfileViewController.setPresentationStyle(.routePreview)
+      elevationProfileViewController.presenter?.update(with: routeElevationPreviewData)
       elevationProfileContainerView.isHidden = false
       return
     }
 
-    let viewController = ElevationProfileBuilder.build(trackData: trackData, delegate: nil)
+    let viewController = ElevationProfileBuilder.build(routeElevationPreviewData: routeElevationPreviewData,
+                                                       delegate: nil,
+                                                       presentationStyle: .routePreview)
     addChild(viewController)
     elevationProfileContainerView.addSubview(viewController.view)
     viewController.view.translatesAutoresizingMaskIntoConstraints = false
@@ -289,10 +297,6 @@ final class NavigationDashboardViewController: UIViewController {
       viewController.view.bottomAnchor.constraint(equalTo: elevationProfileContainerView.bottomAnchor),
     ])
     viewController.didMove(toParent: self)
-    viewController.userInteractionEnabled = false
-    viewController.isChartViewInfoHidden = true
-    viewController.chartHeight = 120
-    viewController.chartInsets = .zero
     elevationProfileViewController = viewController
     elevationProfileContainerView.isHidden = false
   }
@@ -303,6 +307,7 @@ final class NavigationDashboardViewController: UIViewController {
     elevationProfileViewController.view.removeFromSuperview()
     elevationProfileViewController.removeFromParent()
     self.elevationProfileViewController = nil
+    currentRouteElevationPreviewData = nil
   }
 
   // MARK: - Actions
@@ -455,6 +460,7 @@ final class NavigationDashboardViewController: UIViewController {
   private func close() {
     navigationControlView.isVisible = false
     bottomActionsMenu.setHidden(true)
+    removeElevationProfileIfNeeded()
     willMove(toParent: nil)
     presentationStepsController.close { [weak self] in
       self?.view.removeFromSuperview()
@@ -525,7 +531,7 @@ extension NavigationDashboardViewController {
                                selectedRouterType: viewModel.routerType)
       estimatesView.setState(viewModel.estimatesState)
       transportTransitStepsView.setNavigationInfo(viewModel.entity)
-      updateElevationProfile(with: viewModel.elevationInfo)
+      updateElevationProfile(with: viewModel.routeElevationPreviewData)
       routePointsView.setRoutePoints(viewModel.routePoints)
       settingsBadge.isHidden = !viewModel.routingOptions.hasOptions
       settingsBadge.number = viewModel.routingOptions.enabledOptionsCount

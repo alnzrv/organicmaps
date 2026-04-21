@@ -5,7 +5,7 @@ enum NavigationDashboard {
     var routerType: MWMRouterType
     var entity: MWMNavigationDashboardEntity
     var routingOptions: RoutingOptions
-    var elevationInfo: PlacePageTrackData?
+    var routeElevationPreviewData: RouteElevationPreviewData?
     var navigationInfo: NavigationInfo
     var estimates: NSAttributedString
     var dashboardState: MWMNavigationDashboardState
@@ -38,7 +38,7 @@ extension NavigationDashboard.ViewModel {
       routerType: MWMRouter.type(),
       entity: MWMNavigationDashboardEntity(),
       routingOptions: RoutingOptions(),
-      elevationInfo: nil,
+      routeElevationPreviewData: nil,
       navigationInfo: .hidden,
       estimates: NSAttributedString(),
       dashboardState: .hidden,

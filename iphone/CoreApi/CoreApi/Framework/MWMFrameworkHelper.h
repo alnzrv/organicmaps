@@ -6,7 +6,6 @@
 @class MWMMapSearchResult;
 @class TrackInfo;
 @class ElevationProfileData;
-@class PlacePageTrackData;
 
 typedef NS_ENUM(NSUInteger, MWMZoomMode) { MWMZoomModeIn = 0, MWMZoomModeOut };
 
@@ -74,8 +73,6 @@ NS_SWIFT_NAME(FrameworkHelper)
 + (void)showOnMap:(MWMMarkGroupID)categoryId;
 + (void)showBookmark:(MWMMarkID)bookmarkId;
 + (void)showTrack:(MWMTrackID)trackId;
-+ (void)saveRouteAsTrack;
-+ (nullable PlacePageTrackData *)routeElevationProfileData;
 + (void)updatePlacePageData;
 + (void)updateAfterDeleteBookmark;
 + (int)currentZoomLevel;
