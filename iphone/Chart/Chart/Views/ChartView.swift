@@ -322,7 +322,7 @@ public class ChartView: UIView {
     }
 
     let padding = round((upper - lower) / 10)
-    lower = chartData.formatter.yAxisLowerBound(from: max(0, lower - padding))
+    lower = chartData.formatter.yAxisLowerBound(from: lower - padding)
     upper = chartData.formatter.yAxisUpperBound(from: upper + padding)
     let steps = chartData.formatter.yAxisSteps(lowerBound: lower, upperBound: upper)
 
